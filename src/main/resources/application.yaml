@@ -51,44 +51,44 @@ spring:
                   - PUT
                   - DELETE
                   - OPTIONS
-            routes:
-              - id: orders-route
-                uri: lb://ordering
-                predicates:
-                  - Path=/api/v1/orders/**
-                  - Method=GET,POST,PUT,DELETE,OPTIONS
-                filters:
-                  - name: CircuitBreaker
-                    args:
-                      name: ordering-route-cb
-                      statusCodes:
-                        - 502
-                        - 504
-                        - 500
-              - id: customers-route
-                uri: lb://ordering
-                predicates:
-                  - Path=/api/v1/customers/**
-                  - Method=GET,OPTIONS
-              - id: product-catalog-route
-                uri: lb://product-catalog
-                predicates:
-                  - Path=/api/v1/products/**,/api/v1/categories/**,/api/v1/upload-requests/**
-                  - Method=GET,POST,PUT,DELETE,OPTIONS
-                filters:
-                  - LocalResponseCache=5m,30MB
-                  - name: RequestRateLimiter
-                    args:
-                      redis-rate-limiter:
-                        replenishRate: 50
-                        burstCapacity: 200
-                        requestedTokens: 1
-                      key-resolver: "#{@rateLimitKeyResolver}"
-              - id: user-management-route
-                uri: lb://authorization-server
-                predicates:
-                  - Path=/api/v1/users/**
-                  - Method=GET,POST,PUT,DELETE,OPTIONS
+          routes:
+            - id: orders-route
+              uri: lb://ordering
+              predicates:
+                - Path=/api/v1/orders/**
+                - Method=GET,POST,PUT,DELETE,OPTIONS
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: ordering-route-cb
+                    statusCodes:
+                      - 502
+                      - 504
+                      - 500
+            - id: customers-route
+              uri: lb://ordering
+              predicates:
+                - Path=/api/v1/customers/**
+                - Method=GET,OPTIONS
+            - id: product-catalog-route
+              uri: lb://product-catalog
+              predicates:
+                - Path=/api/v1/products/**,/api/v1/categories/**,/api/v1/upload-requests/**
+                - Method=GET,POST,PUT,DELETE,OPTIONS
+              filters:
+                - LocalResponseCache=5m,30MB
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter:
+                      replenishRate: 50
+                      burstCapacity: 200
+                      requestedTokens: 1
+                    key-resolver: "#{@rateLimitKeyResolver}"
+            - id: user-management-route
+              uri: lb://authorization-server
+              predicates:
+                - Path=/api/v1/users/**
+                - Method=GET,POST,PUT,DELETE,OPTIONS
 
 eureka:
   client:
