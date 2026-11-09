@@ -1,0 +1,31 @@
+spring:
+  config:
+    import:
+      - aws-secretsmanager:/secret/algashop/gateway-admin/redis-password?prefix=gateway-admin.secrets.
+      - aws-parameterstore:/config/algashop/gateway-admin?prefix=gateway-admin.params
+      - aws-parameterstore:/config/algashop/shared?prefix=shared.params
+
+  cloud:
+    aws:
+      credentials:
+        access-key: test
+        secret-key: test
+      region:
+        static: us-east-1
+      endpoint: http://algashop-localstack:4566
+  data:
+    redis:
+      host: ${gateway-admin.params.redis.host}
+      port: ${gateway-admin.params.redis.port}
+      password: ${gateway-admin.secrets.redis-password}
+      database: ${gateway-admin.params.redis.database}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${shared.params.auth-server-url}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${shared.params.service-registry-url}/eureka
